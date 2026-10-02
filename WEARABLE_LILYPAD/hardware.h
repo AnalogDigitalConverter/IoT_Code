@@ -1,14 +1,13 @@
-/*hardware_chachi.h*/
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
 // --- BARRA DE 6 LEDS BLANCOS ---
-#define PIN_LED_0 A3  // F5
-#define PIN_LED_1 2   // D2
-#define PIN_LED_2 3   // D3
-#define PIN_LED_3 7   // E6
-#define PIN_LED_4 A4  // F1
-#define PIN_LED_5 A5  // F0
+#define PIN_LED_0 20  // F5
+#define PIN_LED_1 19  // D2
+#define PIN_LED_2 18  // D3
+#define PIN_LED_3 17  // E6
+#define PIN_LED_4 16  // F1
+#define PIN_LED_5 15  // F0
 
 // --- LED RGB ---
 #define PIN_RGB_R 10  // B6

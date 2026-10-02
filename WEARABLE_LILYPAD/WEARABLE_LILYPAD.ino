@@ -1,4 +1,9 @@
-#include hardware.h
+#include "hardware.h"
+
+const uint8_t barra_leds[] = {PIN_LED_0, PIN_LED_1, PIN_LED_2, PIN_LED_3, PIN_LED_4, PIN_LED_5};
+uint16_t luminosidad = 0;
+uint8_t cycle = 0;
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -9,43 +14,46 @@ void setup() {
   pinMode(PIN_ACCEL_Z, INPUT);
   
   pinMode(PIN_ZUMBADOR,     OUTPUT);
-  pinMode(PIN_LED_0,        OUTPUT);
-  pinMode(PIN_LED_1,        OUTPUT);
-  pinMode(PIN_LED_2,        OUTPUT);
-  pinMode(PIN_LED_3,        OUTPUT);
-  pinMode(PIN_LED_4,        OUTPUT);
-  pinMode(PIN_LED_5,        OUTPUT);
-  pinMode(PIN_LED_R,        OUTPUT);
-  pinMode(PIN_LED_G,        OUTPUT);
-  pinMode(PIN_LED_B,        OUTPUT);
+
+  for (int x = 0; x <= 5; x++){
+    pinMode(barra_leds[x], OUTPUT);
+  }
+
+  pinMode(PIN_RGB_R,        OUTPUT);
+  pinMode(PIN_RGB_G,        OUTPUT);
+  pinMode(PIN_RGB_B,        OUTPUT);
+
   /*fsm init*/
   //ESTADO INICIAL OFF
 
+  //debug
+  Serial.begin(9600);
+  delay(1000);
+
 }
 
-const uint8_t barra_leds[6] = {PIN_LED_0, PIN_LED_1, PIN_LED_2, PIN_LED_3, PIN_LED_4, PIN_LED_5};
-uint16_t luminosidad = 0;
+
+//char [16] texto;
 
 void loop() {
   // put your main code here, to run repeatedly:
 
-  while (estado = activo){
   //medir
   luminosidad = medir_luminosidad();
-  //pintar
-  pintar_luminosidad(luminosidad, barra_leds);
+  
+  //output
+  cycle++;
+  Serial.print("cycle: ");
+  Serial.println(cycle);
 
-  //sonar -> esto jode el timing en tiempo de ejecución
-  tone(PIN_ZUMBADOR,NOTE_C5);
-  delay(200);
-  noTone(PIN_ZUMBADOR);
-  delay(800);
+  Serial.print("sensor value: ");
+  Serial.println(luminosidad);
+  Serial.println("");
 
-  //parpadear
-  parpadear();
-  }
+ //pintar
+  pintar_luminosidad(1023, barra_leds);
 
-
+  delay (1000);
 
 }
 
@@ -55,7 +63,8 @@ uint16_t medir_luminosidad(void){
   /*Determinar LSB (3.3v/1024) y programar función de transferencia*/
   //d=Vin/Vref*1024
   //analogReference(DEFAULT, EXTERNAL)
-  analogReference(DEFAULT);
+  //analogReference(DEFAULT);
+
   return analogRead(PIN_LUMINOSIDAD);
   
 }
@@ -63,10 +72,31 @@ uint16_t medir_luminosidad(void){
 
 void pintar_luminosidad(uint8_t luminosidad, uint8_t* barra_leds){
 
-  for (int i = 0; i < 6; i++){
-    digitalWrite(barra_leds[i],LOW); // If buttonState is HIGH (unpressed), turn off the LED
+  // Create a LED bargraph using value as an input.
+  // Value should be in the range 0 to 1023.
 
+  int x;
+  
+  // Step through the bargraph LEDs,
+  // Turn them on or off depending on value.
+
+  // Value will be in the range 0 to 1023.
+  // There are 6 LEDs in the bargraph.
+  // 1023 divided by 6 is 170, so 170 will be our threshold
+  // between each LED (0,42,84, etc.)
+
+  for (x=0; x <= 5; x++)
+  {
+    if (luminosidad > (x*170) )
+    {
+      digitalWrite(barra_leds[x], HIGH);
+    }
+    else
+    {
+      digitalWrite(barra_leds[x], LOW);
+    }    
   }
 
 
 }
+
